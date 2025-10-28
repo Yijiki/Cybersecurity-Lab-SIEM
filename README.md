@@ -1,10 +1,14 @@
-# Cybersecurity Lab: SIEM
+# Cybersecurity Lab: Firewall
 
 ## Objective
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar. Nam sed fringilla diam. Vivamus consectetur mollis arcu eu dictum. Phasellus lobortis ornare libero sit amet bibendum. Sed egestas elit sed lacus semper auctor. Cras ac iaculis velit. Aliquam interdum ultrices enim, vel auctor leo vulputate ac. Sed feugiat erat non libero accumsan fermentum. Nulla vel nibh et magna lacinia tempus sit amet at mauris.
 
-### Skills Learned
+## Background and Motivation
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar. Nam sed fringilla diam. Vivamus consectetur mollis arcu eu dictum. Phasellus lobortis ornare libero sit amet bibendum. Sed egestas elit sed lacus semper auctor. Cras ac iaculis velit. Aliquam interdum ultrices enim, vel auctor leo vulputate ac. Sed feugiat erat non libero accumsan fermentum. Nulla vel nibh et magna lacinia tempus sit amet at mauris.
+
+## Problem Statements
 
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
@@ -12,12 +16,34 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliq
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
 
-### Tools Used
+## Skills Learned
 
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
+
+## Technologies Used
+
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar.
 
 ## Steps
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar. Nam sed fringilla diam. Vivamus consectetur mollis arcu eu dictum. Phasellus lobortis ornare libero sit amet bibendum. Sed egestas elit sed lacus semper auctor. Cras ac iaculis velit. Aliquam interdum ultrices enim, vel auctor leo vulputate ac. Sed feugiat erat non libero accumsan fermentum. Nulla vel nibh et magna lacinia tempus sit amet at mauris.
+
+## Strategy/Approach
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar. Nam sed fringilla diam. Vivamus consectetur mollis arcu eu dictum. Phasellus lobortis ornare libero sit amet bibendum. Sed egestas elit sed lacus semper auctor. Cras ac iaculis velit. Aliquam interdum ultrices enim, vel auctor leo vulputate ac. Sed feugiat erat non libero accumsan fermentum. Nulla vel nibh et magna lacinia tempus sit amet at mauris.
+
+## Achievements
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar. Nam sed fringilla diam. Vivamus consectetur mollis arcu eu dictum. Phasellus lobortis ornare libero sit amet bibendum. Sed egestas elit sed lacus semper auctor. Cras ac iaculis velit. Aliquam interdum ultrices enim, vel auctor leo vulputate ac. Sed feugiat erat non libero accumsan fermentum. Nulla vel nibh et magna lacinia tempus sit amet at mauris.
+
+## Limitations
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum blandit aliquet mi nec pulvinar. Nam sed fringilla diam. Vivamus consectetur mollis arcu eu dictum. Phasellus lobortis ornare libero sit amet bibendum. Sed egestas elit sed lacus semper auctor. Cras ac iaculis velit. Aliquam interdum ultrices enim, vel auctor leo vulputate ac. Sed feugiat erat non libero accumsan fermentum. Nulla vel nibh et magna lacinia tempus sit amet at mauris.
