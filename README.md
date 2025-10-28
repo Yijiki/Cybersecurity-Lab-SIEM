@@ -1,4 +1,4 @@
-# Cybersecurity Lab: Firewall
+# Cybersecurity Lab: SIEM
 
 ## Objective
 
