@@ -371,4 +371,65 @@ In TheHive, navigate to **Platform Management → Connectors → MISP** and clic
 
 Click **Confirm**.
 
+## Phase 4 — Detection Engineering
+
+### Step 5: Custom Wazuh Rules
+
+Custom rules are written in `local_rules.xml` on the Wazuh Manager. Open the file for editing:
+
+```bash
+sudo nano /var/ossec/etc/rules/local_rules.xml
+```
+
+Add the following rule group beneath the existing example content:
+
+```xml
+<group name="atomic_red_team,">
+
+  <!-- Process Creation w/ Suspicious PowerShell Download -->
+  <rule id="100010" level="14">
+    <if_group>sysmon_event1</if_group>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(Invoke-WebRequest|iwr|Net.WebClient|curl)</field>
+    <description>Process creation w/ Suspicious PowerShell download</description>
+    <mitre>
+      <id>T1105</id>
+    </mitre>
+  </rule>
+
+  <!-- Suppress false positives from Microsoft Edge Update -->
+  <rule id="100011" level="0">
+    <if_sid>100010</if_sid>
+    <field name="win.eventdata.image">\\MicrosoftEdgeUpdate\.exe</field>
+    <description>Ignore False Positives from Microsoft Edge Update pings</description>
+  </rule>
+
+  <!-- Registry Run(Once)(Ex) Key Modification -->
+  <rule id="100012" level="13">
+    <if_group>sysmon_event_13</if_group>
+    <field name="win.eventdata.targetObject" type="pcre2">(?i)HKU\\.*\\CurrentVersion\\Run(Once)?(EX)?</field>
+    <description>Registry Run keys modified - Possible persistence mechanism</description>
+    <mitre>
+      <id>T1547.001</id>
+    </mitre>
+  </rule>
+
+  <!-- Suspicious Scheduled Task Creation via Command Line -->
+  <rule id="100013" level="12">
+    <if_group>sysmon_event1</if_group>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(schtasks.*\/create|New-ScheduledTask|Register-ScheduledTask)</field>
+    <description>Suspicious Scheduled Task Creation via Command Line</description>
+    <mitre>
+      <id>T1053.005</id>
+    </mitre>
+  </rule>
+
+</group>
+```
+
+Once saved, restart the Wazuh Manager to apply the new rules:
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
 
