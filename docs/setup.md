@@ -1,6 +1,6 @@
 # Setup Guide
 
-## Phase 1 — Infrastructure
+## Phase 1 - Infrastructure
 
 ### Step 1: Network Planning
 
@@ -177,7 +177,7 @@ docker compose ps
 
 MISP is accessible at `https://127.0.0.1:9443`. Log in with the credentials set in `.env`.
 
-## Phase 2 — Endpoint Configuration
+## Phase 2 - Endpoint Configuration
 
 ### Step 6: Windows Endpoint Setup
 
@@ -259,4 +259,116 @@ sudo systemctl start wazuh-agent
 ```
 
 Both agents should now appear as active in the Wazuh dashboard under **Agents**.
+
+## Phase 3 - Integrations
+
+### Step 1: TheHive Organisation Setup
+
+Access TheHive at `http://127.0.0.1:9000/thehive` and log in with the default credentials `admin@thehive.local / secret`.
+
+#### Create the Organisation
+
+Navigate to **Organisation Management** and click **Create Organisation**. Set the name to `SOC-Lab` and the description to `Primary SOC`.
+
+#### Create Users
+
+Inside the SOC-Lab organisation, create the following three users. After saving each user, click into their profile to set a password. For the `shuffle` service account, generate an API key instead and save it somewhere secure.
+
+| Login         | Role      | Purpose                        |
+|---------------|-----------|--------------------------------|
+| admin         | org-admin | Organisation administrator     |
+| analyst       | analyst   | SOC analyst account            |
+| shuffle       | analyst   | Shuffle SOAR service account   |
+
+---
+
+### Step 2: Cortex Setup
+
+Access Cortex at `http://127.0.0.1:9001/cortex`. On first access, click **Update the database** and then create an admin account.
+
+#### Create the Organisation
+
+Click **Add Organisation** and set the name to `SOC-Lab` and the description to `Primary SOC`.
+
+#### Create an Org Admin User
+
+Click on the SOC-Lab organisation, navigate to the **Users** tab and click **Add User** with the following details:
+
+- **Login:** admin@soc.lab
+- **Name:** SOC Admin
+- **Roles:** org-admin, read, analyze
+
+Save the user, then click into their profile and set a password.
+
+#### Enable Analyzers
+
+Log out of the global admin account and log back in as `admin@soc.lab`. Navigate to **Organisation → Analyzers** and enable the following:
+
+| Analyzer                  | Version | Purpose               | API Key Required |
+|---------------------------|---------|-----------------------|------------------|
+| VirusTotal_GetReport_3_1  | 3.1     | Hash/IP/domain lookup | Yes (free)       |
+| URLhaus_2_0               | 2.0     | Malicious URL check   | Yes (free)       |
+| Abuse_Finder_3_0          | 3.0     | Abuse contact lookup  | No               |
+| FileInfo_8_0              | 8.0     | File metadata         | No               |
+
+When enabling VirusTotal and URLhaus, enter the respective free API keys in the configuration fields.
+
+#### Fix Cortex Job Directory Permissions
+
+The Cortex container runs as UID 1000 but the job output directory is owned by root, which prevents analyzers from writing results. Run the following on the soc-core VM to fix this:
+
+```bash
+cd ~/docker/testing
+
+sudo chown -R $USER:$USER ./cortex/cortex-jobs
+chmod 777 ./cortex/cortex-jobs
+
+docker compose restart cortex
+```
+
+#### Connect Cortex to TheHive
+
+In TheHive, navigate to **Platform Management → Connectors → Cortex** and click **Add**. Configure as follows:
+
+- **URL:** `http://10.0.5.x:9001/cortex` (replace with your soc-core VM's IP)
+- **API Key:** Generate a new API key in Cortex under **Organisation → Users**, copy it and paste it here
+- **Check certificate authority:** Unchecked
+
+Click **Confirm**.
+
+---
+
+### Step 3: MISP Initial Configuration
+
+Access MISP at `https://127.0.0.1:9443` and log in with the credentials set in your `.env` file during installation.
+
+#### Enable Threat Intelligence Feeds
+
+Navigate to **Sync Actions → Feeds** and enable the following feeds:
+
+- CIRCL OSINT Feed
+- Botvrij.eu Data
+
+Once enabled, click **Fetch and store all feed data** to perform the initial pull.
+
+#### Generate a MISP API Key
+
+Navigate to **Administration → List Auth Keys → Add Authentication Key**. Generate a key for the admin account and save it.
+
+#### Connect MISP to TheHive
+
+In TheHive, navigate to **Platform Management → Connectors → MISP** and click **Add**. Configure as follows:
+
+- **Server URL:** `https://10.0.5.x:9443` (replace with your soc-core VM's IP)
+- **API Key:** The key generated in the previous step
+- **Purpose:** Import and Export
+- **Proxy:** Leave empty
+- **Certificate Authority:** Unchecked
+- **Host name verification:** Unchecked
+- **Export case tags:** Checked
+- **Observable tags:** Checked
+- **Export Hive URL:** Checked
+
+Click **Confirm**.
+
 
