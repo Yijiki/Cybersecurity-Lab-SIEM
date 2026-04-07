@@ -179,7 +179,7 @@ MISP is accessible at `https://127.0.0.1:9443`. Log in with the credentials set 
 
 ## Phase 2 - Endpoint Configuration
 
-### Step 6: Windows Endpoint Setup
+### Step 1: Windows Endpoint Setup
 
 Create a new VM with the following specifications:
 
@@ -236,7 +236,7 @@ Restart-Service -Name "Wazuh"
 
 ---
 
-### Step 7: Linux Endpoint Setup
+### Step 2: Linux Endpoint Setup
 
 Create a new VM with the following specifications:
 
@@ -373,7 +373,7 @@ Click **Confirm**.
 
 ## Phase 4 — Detection Engineering
 
-### Step 5: Custom Wazuh Rules
+### Step 1: Custom Wazuh Rules
 
 Custom rules are written in `local_rules.xml` on the Wazuh Manager. Open the file for editing:
 
