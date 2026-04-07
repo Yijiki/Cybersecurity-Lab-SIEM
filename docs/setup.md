@@ -176,3 +176,87 @@ docker compose ps
 ```
 
 MISP is accessible at `https://127.0.0.1:9443`. Log in with the credentials set in `.env`.
+
+## Phase 2 — Endpoint Configuration
+
+### Step 6: Windows Endpoint Setup
+
+Create a new VM with the following specifications:
+
+- **OS:** Windows 11 Enterprise Evaluation LTSC
+- **RAM:** 4GB (reduced to 2GB after initial installation)
+- **Disk:** 45GB
+- **vCPUs:** 2
+- **Network:** soc-net
+
+#### Install Wazuh Agent
+
+Log into the Wazuh dashboard from your host at `https://127.0.0.1:8443`. Navigate to **Deploy new agent**, select **Windows (MSI 32/64 bits)**, enter your Wazuh Manager's IP (soc-core VM's IP) and give the agent a name such as `vic-win11`. Assign it to the `default` group.
+
+Copy the generated PowerShell command, open PowerShell as Administrator inside the Windows VM and paste it. Once the installation completes, start the agent service:
+
+```powershell
+Start-Service -Name "Wazuh"
+```
+
+#### Install Sysmon
+
+Download the [Sysinternals Sysmon ZIP](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) and extract it. Download the [SwiftOnSecurity Sysmon config](https://github.com/SwiftOnSecurity/sysmon-config) and place `sysmonconfig-export.xml` in the same folder as the extracted Sysmon files.
+
+In an Administrator PowerShell, navigate to the folder and install Sysmon with the config:
+
+```powershell
+.\Sysmon64.exe -i sysmonconfig-export.xml -accepteula
+```
+
+#### Configure Wazuh to Ingest Sysmon Logs
+
+By default, Wazuh does not monitor Sysmon logs. The agent config needs to be updated to tell it where to look.
+
+Open the Wazuh agent config in an Administrator PowerShell:
+
+```powershell
+notepad "C:\Program Files (x86)\ossec-agent\ossec.conf"
+```
+
+Add the following block before the closing `</ossec_config>` tag:
+
+```xml
+<localfile>
+  <log_format>eventchannel</log_format>
+  <location>Microsoft-Windows-Sysmon/Operational</location>
+</localfile>
+```
+
+Save the file and restart the Wazuh agent:
+
+```powershell
+Restart-Service -Name "Wazuh"
+```
+
+---
+
+### Step 7: Linux Endpoint Setup
+
+Create a new VM with the following specifications:
+
+- **OS:** Ubuntu 22.04 Desktop
+- **RAM:** 2GB
+- **Disk:** 25GB
+- **vCPUs:** 2
+- **Network:** soc-net
+
+#### Install Wazuh Agent
+
+Log into the Wazuh dashboard from your host at `https://127.0.0.1:8443`. Navigate to **Deploy new agent**, select **Linux (DEB amd64)**, enter your Wazuh Manager's IP and give the agent a name such as `vic-ubuntu`. Assign it to the `default` group.
+
+Copy the generated command, open a terminal inside the Ubuntu VM and paste it. Once the installation completes, enable and start the agent service:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable wazuh-agent
+sudo systemctl start wazuh-agent
+```
+
+Both agents should now appear as active in the Wazuh dashboard under **Agents**.
+
