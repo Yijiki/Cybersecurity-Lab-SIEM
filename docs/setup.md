@@ -338,7 +338,7 @@ Click **Confirm**.
 
 ---
 
-### Step 3: MISP Initial Configuration
+### Step 3: MISP Setup
 
 Access MISP at `https://127.0.0.1:9443` and log in with the credentials set in your `.env` file during installation.
 
