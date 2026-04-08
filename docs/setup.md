@@ -371,7 +371,7 @@ In TheHive, navigate to **Platform Management → Connectors → MISP** and clic
 
 Click **Confirm**.
 
-## Phase 4 — Detection Engineering
+## Phase 4 - Detection Engineering
 
 ### Step 1: Custom Wazuh Rules
 
@@ -431,5 +431,238 @@ Once saved, restart the Wazuh Manager to apply the new rules:
 ```bash
 sudo systemctl restart wazuh-manager
 ```
+
+## Phase 5 - SOAR Automation (Shuffle)
+
+### Overview
+
+The completed workflow follows this logic:
+
+```
+Wazuh (detects alert)
+  ↓
+Shuffle Webhook (receives JSON)
+  ↓
+Regex Node (extracts SHA256 hash)
+  ↓
+Cortex / VirusTotal (scores the hash)
+  ↓
+TheHive (creates case with enrichment data)
+  ↓
+Condition (VirusTotal score > 3?)
+  ↓ YES
+Wazuh Active Response (drop-firewall - isolates host)
+```
+
+---
+
+### Step 1: Connect Wazuh to Shuffle
+
+#### Create the Webhook
+
+In Shuffle, create a **AutoResponse** workflow and drag a **Webhook** node onto the canvas. Name it `wazuh-alert`. Copy the webhook URL - it will look like:
+
+```
+http://127.0.0.1:3001/api/v1/hooks/webhook_xxxxxxxx
+```
+
+#### Point Wazuh at Shuffle
+
+On the Wazuh Manager VM, open `ossec.conf` for editing:
+
+```bash
+sudo nano /var/ossec/etc/ossec.conf
+```
+
+Add the following integration block, replacing the URL with your copied webhook URL. The `rule_id` ties this integration to the suspicious PowerShell download rule specifically:
+
+```xml
+<integration>
+  <name>shuffle</name>
+  <hook_url>http://127.0.0.1:3001/api/v1/hooks/YOUR_WEBHOOK_ID</hook_url>
+  <rule_id>100010</rule_id>
+  <alert_format>json</alert_format>
+</integration>
+```
+
+Restart the Wazuh Manager:
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
+#### Add Credentials to Shuffle
+
+In Shuffle, navigate to **Credentials** and add API keys for TheHive and Cortex. These are used to authenticate the respective nodes in the workflow. When configuring each node, select the matching credential from the dropdown.
+
+---
+
+### Step 2: Regex Node - Extract SHA256 Hash
+
+Wazuh sends Sysmon hash data as a single concatenated string in the format:
+
+```
+MD5=abc123...,SHA1=def456...,SHA256=A1B2C3D4...
+```
+
+Only the SHA256 value is needed for VirusTotal enrichment.
+
+Drag a **Shuffle Tools** node onto the canvas and connect it to the Webhook node. Configure it as follows:
+
+| Field      | Value                              |
+|------------|------------------------------------|
+| Action     | Regex capture group                |
+| Input data | `$exec.text.win.eventdata.hashes`  |
+| Regex      | `SHA256=([A-Fa-f0-9]{64})`         |
+
+The captured hash is referenced in subsequent nodes as `$regex_capture_group.group_0`.
+
+---
+
+### Step 3: Cortex Node - VirusTotal Hash Lookup
+
+Drag a **Cortex** node onto the canvas and connect it to the Regex node. Configure it as follows:
+
+| Field    | Value                           |
+|----------|---------------------------------|
+| Action   | Run analyzer                    |
+| Analyzer | VirusTotal_GetReport_3_1        |
+| Data     | `$regex_capture_group.group_0`  |
+
+Cortex submits the hash to VirusTotal and returns a JSON result containing a `malicious` count - the number of antivirus engines that flagged the file. This value is referenced in subsequent nodes as `$run_analyzer.summary.malicious`.
+
+---
+
+### Step 4: TheHive Node - Create Case
+
+Drag a **TheHive** node onto the canvas and connect it to the Cortex node. Configure it as follows:
+
+| Field       | Value                                                         |
+|-------------|---------------------------------------------------------------|
+| Action      | Create alert                                                  |
+| Title       | `[Automated] Suspicious PowerShell on $exec.text.agent.name` |
+| Severity    | 3 (High)                                                      |
+| Description | See template below                                            |
+
+Use the following as the description template, which pulls in all relevant enrichment data from earlier nodes:
+
+```
+Alert ID: $exec.text.id
+Host: $exec.text.agent.name ($exec.text.agent.ip)
+Rule: $exec.text.rule.description (ID: $exec.text.rule.id)
+Command: $exec.text.win.eventdata.commandLine
+VirusTotal Score: $run_analyzer.summary.malicious / 70
+Action Taken: Automated isolation pending...
+```
+
+---
+
+### Step 5: Condition - VirusTotal Score Gate
+
+Rather than isolating a host on every alert, the workflow uses a condition to gate the active response. This prevents automated isolation from triggering on false positives.
+
+Click the **connector line** between the TheHive node and the Wazuh node. Add a condition with the following logic:
+
+| Field    | Value                             |
+|----------|-----------------------------------|
+| Variable | `$run_analyzer.summary.malicious` |
+| Operator | GREATER THAN                      |
+| Value    | `3`                               |
+
+The Wazuh isolation node only executes if 3 or more VirusTotal engines flag the hash as malicious.
+
+---
+
+### Step 6: Wazuh Node - Active Response (Host Isolation)
+
+Drag a **Wazuh** node onto the canvas and connect it to the conditional line. Configure it as follows:
+
+| Field    | Value                  |
+|----------|------------------------|
+| Action   | Run command            |
+| Command  | `drop-firewall`        |
+| Agent ID | `$exec.text.agent.id`  |
+
+`drop-firewall` is a built-in Wazuh active response command that blocks all inbound and outbound traffic on the agent using Windows Firewall, effectively isolating the host from the network while leaving the Wazuh agent connection intact so the machine remains visible in the dashboard.
+
+The `agent.id` value pulled from the webhook payload ensures the isolation targets the specific host that triggered the alert rather than applying broadly.
+
+---
+
+### Step 7: Activate and Test
+
+Save the workflow and set the Webhook node as the workflow trigger by clicking **Activate** on the workflow. The workflow will now execute automatically each time Wazuh forwards a rule 100010 alert.
+
+To confirm the integration is live, check the Shuffle execution history after triggering a test alert - each node should show a green status and the execution log will display the data passed between nodes.
+
+## Phase 6 - Adversary Simulation & Validation
+
+### Step 1: Prepare the Windows Endpoint
+
+Before running any simulations, disable Windows Defender on the Windows 11 VM to prevent it from blocking Atomic Red Team test payloads before Wazuh has a chance to detect them. Navigate to **Windows Security → Virus & Threat Protection → Manage Settings** and toggle **Real-time protection** off.
+
+### Step 2: Install Atomic Red Team
+
+Open PowerShell as Administrator on the Windows 11 VM and run the following to set the execution policy and install Atomic Red Team along with its test library:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+
+IEX (IWR 'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1' -UseBasicParsing);
+
+Install-AtomicRedTeam -getAtomics
+```
+
+### Step 3: Run Attack Simulations
+
+Each test below maps to one of the custom Wazuh rules written in Phase 4. Run them one at a time and validate the full pipeline after each before moving to the next.
+
+#### T1105 - Suspicious PowerShell Download (Rule 100010)
+
+```powershell
+Invoke-AtomicTest T1105 -TestNumbers 10
+```
+
+This simulates a file download using native PowerShell download methods, triggering rule 100010. This is also the rule tied to the Shuffle webhook integration, so this test exercises the full automated pipeline end to end.
+
+**Expected result:** Wazuh fires a level 14 alert → Shuffle receives the webhook → Cortex queries VirusTotal → TheHive case is created → if the VirusTotal score exceeds 3, the host is isolated via `drop-firewall`.
+
+#### T1547.001 - Registry Run Key Modification (Rule 100012)
+
+```powershell
+Invoke-AtomicTest T1547.001 -TestNumbers 1
+```
+
+This writes a value to a `CurrentVersion\Run` registry key, simulating a persistence mechanism that survives user login. Triggers rule 100012.
+
+**Expected result:** Wazuh fires a level 13 alert visible in the dashboard.
+
+#### T1053.005 - Scheduled Task Creation (Rule 100013)
+
+```powershell
+Invoke-AtomicTest T1053.005 -TestNumbers 1
+```
+
+This creates a scheduled task via command line using `schtasks /create`, simulating attacker-driven persistence or execution scheduling. Triggers rule 100013.
+
+**Expected result:** Wazuh fires a level 12 alert visible in the dashboard.
+
+---
+
+### Step 4: Validate the Pipeline
+
+After running the T1105 simulation, verify each stage of the pipeline completed successfully:
+
+**Wazuh** - Navigate to the Wazuh dashboard and confirm a level 14 alert fired for rule 100010 against the `vic-win11` agent. The alert should include the full command line in the event data.
+
+**Shuffle** - Open the AutoResponse workflow and check the execution history. Each node should show a green status. Click through the Regex, Cortex and TheHive nodes to confirm data was passed correctly between them.
+
+**TheHive** - Log in as the analyst user and confirm a new case was created automatically with the correct title, host details, rule information and VirusTotal score populated in the description.
+
+**Cortex** - Navigate to the Cortex job history and confirm a VirusTotal analyzer job ran and returned a result.
+
+**Active Response** - If the VirusTotal score exceeded the condition threshold, confirm the Windows VM lost network connectivity while remaining visible as an active agent in the Wazuh dashboard.
+
+
 
 
