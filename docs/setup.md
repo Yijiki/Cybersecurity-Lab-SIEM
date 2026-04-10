@@ -493,7 +493,7 @@ Restart the Wazuh Manager:
 sudo systemctl restart wazuh-manager
 ```
 
-### Add Credentials to Shuffle
+#### Add Credentials to Shuffle
 
 In Shuffle, navigate to **Credentials** and add API keys for TheHive and Cortex.
 ---
