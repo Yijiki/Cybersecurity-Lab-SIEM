@@ -375,7 +375,7 @@ Click **Confirm**.
 
 ### Step 1: Custom Wazuh Rules
 
-Custom rules are written in `local_rules.xml` on the Wazuh Manager. Open the file for editing:
+Custom rules are written in `local_rules.xml` on the Wazuh Manager VM. Open the file for editing:
 
 ```bash
 sudo nano /var/ossec/etc/rules/local_rules.xml
