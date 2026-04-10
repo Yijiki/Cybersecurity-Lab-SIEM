@@ -396,11 +396,11 @@ Add the following rule group beneath the existing example content:
     </mitre>
   </rule>
 
-  <!-- Suppress false positives from Microsoft Edge Update -->
+  <!-- Suppression: False Positive from Microsoft Edge Update -->
   <rule id="100011" level="0">
     <if_sid>100010</if_sid>
     <field name="win.eventdata.image">\\MicrosoftEdgeUpdate\.exe</field>
-    <description>Ignore False Positives from Microsoft Edge Update pings</description>
+    <description>Suppression: False Positive from Microsoft Edge Update</description>
   </rule>
 
   <!-- Registry Run(Once)(Ex) Key Modification -->
