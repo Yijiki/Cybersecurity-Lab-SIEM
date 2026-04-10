@@ -141,7 +141,7 @@ git clone https://github.com/MISP/misp-docker.git
 cd misp-docker
 ```
 
-Open `docker-compose.yml` and update the misp-core port to "${CORE_HTTPS_PORT}:443":
+Open `docker-compose.yml` and update the misp-core port mapping to `"${CORE_HTTPS_PORT}:443"`:
 
 Copy the environment template and open it for editing:
 
