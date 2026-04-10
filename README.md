@@ -103,7 +103,8 @@ Cybersecurity-Lab-SIEM/
 │   ├── attack_simulations.md            # Atomic Red Team execution and results
 │   ├── troubleshooting.md               # Known issues and fixes
 │   └── screenshots/
-│       ├── virtualbox-nat-network.png
+│       ├── virtualbox-nat-network-a.png
+│       ├── virtualbox-nat-network-b.png
 │       ├── wazuh-agents-connected.png
 │       ├── sysmon-telemetry-event.png
 │       ├── wazuh-detection-alert.png
