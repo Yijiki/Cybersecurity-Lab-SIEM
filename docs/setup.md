@@ -89,13 +89,11 @@ Run the initialisation script:
 ./scripts/init.sh
 ```
 
-Before starting the services, open `docker-compose.yml` and change the nginx port to avoid a conflict with Wazuh on port 443:
+Before starting the services, open `docker-compose.yml` and change the nginx port mapping from from `443:443` to `4443:443` to avoid a port conflict:
 
 ```bash
 nano docker-compose.yml
 ```
-
-Find the nginx port mapping and change it from `443:443` to `4443:443`.
 
 Start the services:
 
