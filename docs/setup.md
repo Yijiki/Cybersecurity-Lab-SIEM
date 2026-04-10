@@ -505,7 +505,7 @@ In Shuffle, navigate to **Credentials** and add API keys for TheHive and Cortex.
 Wazuh sends Sysmon hash data as a single concatenated string in the format:
 
 ```
-MD5=abc123...,SHA1=def456...,SHA256=A1B2C3D4...
+MD5=abc123...,SHA256=def456...,IMPHASH=A1B2C3D4...
 ```
 
 Only the SHA256 value is needed for VirusTotal enrichment.
