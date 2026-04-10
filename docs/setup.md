@@ -541,11 +541,11 @@ Drag a **TheHive** node onto the canvas and connect it to the Cortex node. Confi
 | Field       | Value                                                         |
 |-------------|---------------------------------------------------------------|
 | Action      | Create alert                                                  |
-| Title       | `[Automated] Suspicious PowerShell on $exec.text.agent.name` |
+| Title       | `[Automated] Suspicious PowerShell on $exec.text.agent.name`  |
 | Severity    | 3 (High)                                                      |
 | Description | See template below                                            |
 
-Use the following as the description template, which pulls in all relevant enrichment data from earlier nodes:
+Use the following as the description template, which pulls in all relevant data from earlier nodes:
 
 ```
 Alert ID: $exec.text.id
