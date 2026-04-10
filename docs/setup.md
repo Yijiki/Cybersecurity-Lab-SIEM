@@ -593,7 +593,12 @@ The Wazuh isolation node only executes if 3 or more VirusTotal engines flag the 
 
 ### Step 1: Prepare the Windows Endpoint
 
-Before running any simulations, disable Windows Defender on the Windows 11 VM to prevent it from blocking Atomic Red Team test payloads before Wazuh has a chance to detect them. Navigate to **Windows Security → Virus & Threat Protection → Manage Settings** and toggle **Real-time protection** off.
+Before running any simulations, disable Windows Defender on the Windows 11 VM to prevent it from blocking Atomic Red Team test payloads before Wazuh has a chance to detect them. Navigate to **Windows Security → Virus & Threat Protection → Manage Settings** and disable the following:
+
+- **Real-time protection**
+- **Cloud-delivered protection**
+- **Automatic sample submission**
+- **Tamper protection**
 
 ### Step 2: Install Atomic Red Team
 
