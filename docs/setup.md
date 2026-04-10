@@ -641,6 +641,8 @@ This creates a scheduled task via command line using `schtasks /create`, simulat
 
 **Expected result:** Wazuh fires a level 12 alert visible in the dashboard.
 
+> Full execution details and results are documented in [`attack_simulations.md`](attack_simulations.md).
+
 ---
 
 ### Step 4: Validate the Pipeline
