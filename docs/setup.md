@@ -309,7 +309,7 @@ Log out of the global admin account and log back in as `admin@soc.lab`. Navigate
 | Abuse_Finder_3_0          | 3.0     | Abuse contact lookup  | No               |
 | FileInfo_8_0              | 8.0     | File metadata         | No               |
 
-When enabling VirusTotal and URLhaus, enter the respective free API keys in the configuration fields.
+When enabling VirusTotal and URLhaus, enter their respective API keys in the configuration fields.
 
 #### Fix Cortex Job Directory Permissions
 
