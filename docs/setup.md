@@ -500,7 +500,7 @@ In Shuffle, navigate to **Credentials** and add API keys for TheHive and Cortex.
 
 ### Step 2: Regex Node - Extract SHA256 Hash
 
-Wazuh sends Sysmon hash data as a single concatenated string in the format:
+Wazuh sends Sysmon hash data in the following format:
 
 ```
 MD5=abc123...,SHA256=def456...,IMPHASH=A1B2C3D4...
