@@ -476,7 +476,7 @@ On the Wazuh Manager VM, open `ossec.conf` for editing:
 sudo nano /var/ossec/etc/ossec.conf
 ```
 
-Add the following block, replacing the URL with your copied webhook URL. The `rule_id` ties this integration to the suspicious PowerShell download rule specifically:
+Add the following block, replacing the URL with your copied webhook URL. The `rule_id` tag ties this integration to the suspicious PowerShell download rule:
 
 ```xml
 <integration>
