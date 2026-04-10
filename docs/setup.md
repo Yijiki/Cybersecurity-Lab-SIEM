@@ -589,12 +589,6 @@ The Wazuh isolation node only executes if 3 or more VirusTotal engines flag the 
 
 ---
 
-### Step 7: Activate and Test
-
-Save the workflow and set the Webhook node as the workflow trigger by clicking **Activate** on the workflow. The workflow will now execute automatically each time Wazuh forwards a rule 100010 alert.
-
-To confirm the integration is live, check the Shuffle execution history after triggering a test alert - each node should show a green status and the execution log will display the data passed between nodes.
-
 ## Phase 6 - Adversary Simulation & Validation
 
 ### Step 1: Prepare the Windows Endpoint
