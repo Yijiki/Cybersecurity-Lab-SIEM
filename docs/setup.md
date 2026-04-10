@@ -478,7 +478,7 @@ On the Wazuh Manager VM, open `ossec.conf` for editing:
 sudo nano /var/ossec/etc/ossec.conf
 ```
 
-Add the following integration block, replacing the URL with your copied webhook URL. The `rule_id` ties this integration to the suspicious PowerShell download rule specifically:
+Add the following block, replacing the URL with your copied webhook URL. The `rule_id` ties this integration to the suspicious PowerShell download rule specifically:
 
 ```xml
 <integration>
@@ -497,8 +497,7 @@ sudo systemctl restart wazuh-manager
 
 #### Add Credentials to Shuffle
 
-In Shuffle, navigate to **Credentials** and add API keys for TheHive and Cortex. These are used to authenticate the respective nodes in the workflow. When configuring each node, select the matching credential from the dropdown.
-
+In Shuffle, navigate to **Credentials** and add API keys for TheHive and Cortex.
 ---
 
 ### Step 2: Regex Node - Extract SHA256 Hash
@@ -537,7 +536,7 @@ Cortex submits the hash to VirusTotal and returns a JSON result containing a `ma
 
 ---
 
-### Step 4: TheHive Node - Create Case
+### Step 4: TheHive Node - Create Alert
 
 Drag a **TheHive** node onto the canvas and connect it to the Cortex node. Configure it as follows:
 
@@ -555,29 +554,13 @@ Alert ID: $exec.text.id
 Host: $exec.text.agent.name ($exec.text.agent.ip)
 Rule: $exec.text.rule.description (ID: $exec.text.rule.id)
 Command: $exec.text.win.eventdata.commandLine
-VirusTotal Score: $run_analyzer.summary.malicious / 70
+VirusTotal Score: $run_analyzer.summary.malicious / 72
 Action Taken: Automated isolation pending...
 ```
 
 ---
 
-### Step 5: Condition - VirusTotal Score Gate
-
-Rather than isolating a host on every alert, the workflow uses a condition to gate the active response. This prevents automated isolation from triggering on false positives.
-
-Click the **connector line** between the TheHive node and the Wazuh node. Add a condition with the following logic:
-
-| Field    | Value                             |
-|----------|-----------------------------------|
-| Variable | `$run_analyzer.summary.malicious` |
-| Operator | GREATER THAN                      |
-| Value    | `3`                               |
-
-The Wazuh isolation node only executes if 3 or more VirusTotal engines flag the hash as malicious.
-
----
-
-### Step 6: Wazuh Node - Active Response (Host Isolation)
+### Step 5: Wazuh Node - Active Response (Host Isolation)
 
 Drag a **Wazuh** node onto the canvas and connect it to the conditional line. Configure it as follows:
 
@@ -590,6 +573,22 @@ Drag a **Wazuh** node onto the canvas and connect it to the conditional line. Co
 `drop-firewall` is a built-in Wazuh active response command that blocks all inbound and outbound traffic on the agent using Windows Firewall, effectively isolating the host from the network while leaving the Wazuh agent connection intact so the machine remains visible in the dashboard.
 
 The `agent.id` value pulled from the webhook payload ensures the isolation targets the specific host that triggered the alert rather than applying broadly.
+
+---
+
+### Step 6: Condition - VirusTotal Score Gate
+
+Rather than isolating a host on every alert, the workflow uses a condition to gate the active response. This helps prevent automated isolation from triggering on false positives.
+
+Click the **connector line** between the TheHive node and the Wazuh node. Add a condition with the following logic:
+
+| Field    | Value                             |
+|----------|-----------------------------------|
+| Variable | `$run_analyzer.summary.malicious` |
+| Operator | GREATER THAN                      |
+| Value    | `3`                               |
+
+The Wazuh isolation node only executes if 3 or more VirusTotal engines flag the hash as malicious.
 
 ---
 
@@ -629,7 +628,7 @@ Invoke-AtomicTest T1105 -TestNumbers 10
 
 This simulates a file download using native PowerShell download methods, triggering rule 100010. This is also the rule tied to the Shuffle webhook integration, so this test exercises the full automated pipeline end to end.
 
-**Expected result:** Wazuh fires a level 14 alert → Shuffle receives the webhook → Cortex queries VirusTotal → TheHive case is created → if the VirusTotal score exceeds 3, the host is isolated via `drop-firewall`.
+**Expected result:** Wazuh fires a level 14 alert → Shuffle receives the webhook → Cortex queries VirusTotal → TheHive alert is created → if the VirusTotal score exceeds 3, the host is isolated via `drop-firewall`.
 
 #### T1547.001 - Registry Run Key Modification (Rule 100012)
 
