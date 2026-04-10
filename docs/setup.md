@@ -272,11 +272,11 @@ Navigate to **Organisation Management** and click **Create Organisation**. Set t
 
 Inside the SOC-Lab organisation, create the following three users. After saving each user, click into their profile to set a password. For the `shuffle` service account, generate an API key instead and save it somewhere secure.
 
-| Login         | Role      | Purpose                        |
-|---------------|-----------|--------------------------------|
-| admin         | org-admin | Organisation administrator     |
-| analyst       | analyst   | SOC analyst account            |
-| shuffle       | analyst   | Shuffle SOAR service account   |
+| Login   | Type    | Role      | Purpose                      |
+|---------|---------|-----------|------------------------------|
+| admin   | Normal  | org-admin | Organisation administrator   |
+| analyst | Normal  | analyst   | SOC analyst account          |
+| shuffle | Service | analyst   | Shuffle SOAR service account |
 
 ---
 
