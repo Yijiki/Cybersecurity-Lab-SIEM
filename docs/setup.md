@@ -439,19 +439,23 @@ sudo systemctl restart wazuh-manager
 The completed workflow follows this logic:
 
 ```
-Wazuh (detects alert)
-  ↓
-Shuffle Webhook (receives JSON)
-  ↓
-Regex Node (extracts SHA256 hash)
-  ↓
-Cortex / VirusTotal (scores the hash)
-  ↓
-TheHive (creates case with enrichment data)
-  ↓
-Condition (VirusTotal score > 3?)
-  ↓ YES
-Wazuh Active Response (drop-firewall - isolates host)
+Endpoints (Win / Ubuntu)
+      ↓ sends events
+Wazuh SIEM
+      ↓ detects & alerts
+Shuffle SOAR
+      ↓ receives webhook — parses JSON (rule, agent, command data)
+Regex node extracts SHA256 hash from Sysmon event
+      ↓
+Cortex queries VirusTotal for the hash
+      ↓
+TheHive alert created with host info and VT score
+      ↓
+Condition: VT malicious count > 3?
+      ↓ YES
+Wazuh active response isolates the host
+      ↓
+SOC analyst reviews the TheHive alert             
 ```
 
 ---
