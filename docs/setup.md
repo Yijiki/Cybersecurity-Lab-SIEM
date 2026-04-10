@@ -424,6 +424,8 @@ Add the following rule group beneath the existing example content:
 </group>
 ```
 
+> For a breakdown of each rule's detection logic, see [`docs/rules.md`](rules.md).
+
 Once saved, restart the Wazuh Manager to apply the new rules:
 
 ```bash
@@ -519,7 +521,7 @@ The captured hash is referenced in subsequent nodes as `$regex_capture_group.gro
 
 ### Step 3: Cortex Node - VirusTotal Hash Lookup
 
-Drag a **Cortex** node onto the canvas and connect it to the Regex node. Configure it as follows:
+Search for **Cortex** in the Shuffle app search bar and drag it onto the canvas. Connect it to the Regex node. When prompted, enter your Cortex API key and URL to authenticate the node. Configure it as follows:
 
 | Field    | Value                           |
 |----------|---------------------------------|
@@ -533,7 +535,7 @@ Cortex submits the hash to VirusTotal and returns a JSON result containing a `ma
 
 ### Step 4: TheHive Node - Create Alert
 
-Drag a **TheHive** node onto the canvas and connect it to the Cortex node. Configure it as follows:
+Search for **TheHive** in the Shuffle app search bar and drag it onto the canvas. Connect it to the Cortex node. When prompted, enter your TheHive API key and URL to authenticate the node. Configure it as follows:
 
 | Field       | Value                                                         |
 |-------------|---------------------------------------------------------------|
@@ -557,7 +559,7 @@ Action Taken: Automated isolation pending...
 
 ### Step 5: Wazuh Node - Active Response (Host Isolation)
 
-Drag a **Wazuh** node onto the canvas and connect it to the conditional line. Configure it as follows:
+Search for **Wazuh** in the Shuffle app search bar and drag it onto the canvas. Connect it to the TheHive node. When prompted, enter your Wazuh API credentials to authenticate the node. Configure it as follows:
 
 | Field    | Value                  |
 |----------|------------------------|
@@ -565,7 +567,7 @@ Drag a **Wazuh** node onto the canvas and connect it to the conditional line. Co
 | Command  | `drop-firewall`        |
 | Agent ID | `$exec.text.agent.id`  |
 
-`drop-firewall` is a built-in Wazuh active response command that blocks all inbound and outbound traffic on the agent using Windows Firewall, effectively isolating the host from the network while leaving the Wazuh agent connection intact so the machine remains visible in the dashboard.
+`drop-firewall` is a built-in Wazuh active response command that blocks all inbound and outbound traffic on the agent using Windows Firewall, isolating the host from the network while leaving the Wazuh agent connection intact.
 
 The `agent.id` value pulled from the webhook payload ensures the isolation targets the specific host that triggered the alert rather than applying broadly.
 
