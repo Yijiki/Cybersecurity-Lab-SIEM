@@ -264,7 +264,7 @@ Both agents should now appear as active in the Wazuh dashboard under **Agents**.
 
 Access TheHive at `http://127.0.0.1:9000/thehive` and log in with the default credentials `admin@thehive.local / secret`.
 
-#### Create the Organisation
+#### Create an Organisation
 
 Navigate to **Organisation Management** and click **Create Organisation**. Set the name to `SOC-Lab` and the description to `Primary SOC`.
 
