@@ -84,7 +84,7 @@ Invoke-AtomicTest T1547.001 -TestNumbers 1    # Registry Run key modification
 Invoke-AtomicTest T1053.005 -TestNumbers 1    # Scheduled task creation
 ```
 
-Validated the full pipeline: Wazuh detects → Shuffle triggers → TheHive alert created → Cortex enriches → host isolated.
+Validated the full pipeline: Wazuh detects → Shuffle triggers → Cortex enriches → TheHive alert fires → host isolated.
 
 
 ## Repository Structure
