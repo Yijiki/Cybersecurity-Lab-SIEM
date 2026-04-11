@@ -89,7 +89,7 @@ Run the initialisation script:
 ./scripts/init.sh
 ```
 
-Before starting the services, open `docker-compose.yml` and change the nginx port mapping from from `443:443` to `4443:443` to avoid a port conflict:
+Before starting the services, open `docker-compose.yml` and change the nginx port mapping from `443:443` to `4443:443` to avoid a port conflict:
 
 ```bash
 nano docker-compose.yml
@@ -142,6 +142,10 @@ cd misp-docker
 ```
 
 Open `docker-compose.yml` and update the misp-core port mapping to `"${CORE_HTTPS_PORT}:443"`:
+
+```bash
+nano docker-compose.yml
+```
 
 Copy the environment template and open it for editing:
 
