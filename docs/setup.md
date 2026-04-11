@@ -638,7 +638,7 @@ Each test below maps to one of the custom Wazuh rules written in Phase 4. Run th
 Invoke-AtomicTest T1105 -TestNumbers 10
 ```
 
-This simulates a file download using native PowerShell download methods, triggering rule 100010. This is also the rule tied to the Shuffle webhook integration, so this test exercises the full automated pipeline end to end.
+This simulates a file download using native PowerShell download methods, triggering rule 100010. This is also the rule tied to the Shuffle webhook integration.
 
 **Expected result:** Wazuh fires a level 14 alert → Shuffle receives the webhook → Cortex queries VirusTotal → TheHive alert is created → if the VirusTotal score exceeds 3, the host is isolated via `drop-firewall`.
 
