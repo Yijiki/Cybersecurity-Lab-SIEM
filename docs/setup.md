@@ -444,7 +444,7 @@ Endpoints (Win / Ubuntu)
 Wazuh SIEM
       ↓ detects & alerts
 Shuffle SOAR
-      ↓ receives webhook — parses JSON (rule, agent, command data)
+      ↓ receives webhook - parses JSON (rule, agent, command data)
 Regex node extracts SHA256 hash from Sysmon event
       ↓
 Cortex queries VirusTotal for the hash
