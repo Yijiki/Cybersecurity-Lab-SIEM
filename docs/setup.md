@@ -394,11 +394,11 @@ Add the following rule group beneath the existing example content:
     </mitre>
   </rule>
 
-  <!-- Suppression: False Positive from Microsoft Edge Update -->
+  <!-- Suppression - False Positive from Microsoft Edge Update -->
   <rule id="100011" level="0">
     <if_sid>100010</if_sid>
     <field name="win.eventdata.image">\\MicrosoftEdgeUpdate\.exe</field>
-    <description>Suppression: False Positive from Microsoft Edge Update</description>
+    <description>Suppression - False Positive from Microsoft Edge Update</description>
   </rule>
 
   <!-- Registry Run(Once)(Ex) Key Modification -->
