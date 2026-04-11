@@ -616,7 +616,7 @@ Before running any simulations, disable Windows Defender on the Windows 11 VM to
 
 ### Step 2: Install Atomic Red Team
 
-Open PowerShell as Administrator on the Windows 11 VM and run the following to set the execution policy and install Atomic Red Team along with its test library:
+Open PowerShell as Administrator on the Windows 11 VM and run the following to set the execution policy and install Atomic Red Team:
 
 ```powershell
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
