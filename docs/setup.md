@@ -581,13 +581,13 @@ Search for **Wazuh** in the Shuffle app search bar and drag it onto the canvas. 
 
 `drop-firewall` is a built-in Wazuh active response command that blocks all inbound and outbound traffic on the agent using Windows Firewall, isolating the host from the network while leaving the Wazuh agent connection intact.
 
-The `agent.id` value ensures the isolation targets the specific host that triggered the alert rather than every machine.
+The `agent.id` value ensures only the specific host that triggered the alert is isolated rather than every machine.
 
 ---
 
 ### Step 6: Condition - VirusTotal Score Gate
 
-Rather than isolating a host on every alert, the workflow uses a condition to gate the active response. This helps prevent automated isolation from triggering on false positives.
+The workflow uses a condition to gate the active response. This helps prevent automated isolation from triggering on false positives.
 
 Click the **connector line** between the TheHive node and the Wazuh node. Add a condition with the following logic:
 
@@ -630,7 +630,7 @@ Install-AtomicRedTeam -getAtomics
 
 ### Step 3: Run Attack Simulations
 
-Each test below maps to one of the custom Wazuh rules written in Phase 4. Run them one at a time and validate the full pipeline after each before moving to the next.
+Each test below maps to one of the custom Wazuh rules written in Phase 4. Run them one at a time and validate the full pipeline before moving to the next.
 
 #### T1105 - Suspicious PowerShell Download (Rule 100010)
 
@@ -650,7 +650,7 @@ This simulates a file download using native PowerShell download methods, trigger
 Invoke-AtomicTest T1547.001 -TestNumbers 1
 ```
 
-This writes a value to a `CurrentVersion\Run` registry key, simulating a persistence mechanism that survives user login. Triggers rule 100012.
+This writes a value to a `CurrentVersion\Run` registry key, simulating a persistence mechanism that survives user login, triggering rule 100012.
 
 **Expected result:** Wazuh fires a level 13 alert visible in the dashboard.
 
@@ -662,7 +662,7 @@ This writes a value to a `CurrentVersion\Run` registry key, simulating a persist
 Invoke-AtomicTest T1053.005 -TestNumbers 1
 ```
 
-This creates a scheduled task via command line using `schtasks /create`, simulating attacker-driven persistence or execution scheduling. Triggers rule 100013.
+This creates a scheduled task via command line using `schtasks /create`, simulating attacker-driven persistence or execution scheduling, triggering rule 100013.
 
 **Expected result:** Wazuh fires a level 12 alert visible in the dashboard.
 
