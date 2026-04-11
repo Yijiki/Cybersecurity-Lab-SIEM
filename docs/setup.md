@@ -179,6 +179,8 @@ docker compose ps
 
 MISP is accessible at `https://127.0.0.1:9443`. Log in with the credentials set in `.env`.
 
+---
+
 ## Phase 2 - Endpoint Configuration
 
 ### Step 1: Windows Endpoint Setup
@@ -261,6 +263,8 @@ sudo systemctl start wazuh-agent
 ```
 
 Both agents should now appear as active in the Wazuh dashboard under **Agents**.
+
+---
 
 ## Phase 3 - Integrations
 
@@ -373,6 +377,8 @@ In TheHive, navigate to **Platform Management → Connectors → MISP** and clic
 
 Click **Confirm**.
 
+---
+
 ## Phase 4 - Detection Engineering
 
 ### Step 1: Custom Wazuh Rules
@@ -436,6 +442,8 @@ Once saved, restart the Wazuh Manager to apply the new rules:
 sudo systemctl restart wazuh-manager
 ```
 
+---
+
 ## Phase 5 - SOAR Automation (Shuffle)
 
 ### Overview
@@ -468,7 +476,7 @@ SOC analyst reviews the TheHive alert
 
 #### Create the Webhook
 
-In Shuffle, create a **AutoResponse** workflow and drag a **Webhook** node onto the canvas. Name it `wazuh-alert`. Copy the webhook URL - it will look like:
+In Shuffle, create an **AutoResponse** workflow and drag a **Webhook** node onto the canvas. Name it `wazuh-alert`. Copy the webhook URL - it will look like:
 
 ```
 http://127.0.0.1:3001/api/v1/hooks/webhook_xxxxxxxx
@@ -604,6 +612,8 @@ Before running any simulations, disable Windows Defender on the Windows 11 VM to
 - **Automatic sample submission**
 - **Tamper protection**
 
+---
+
 ### Step 2: Install Atomic Red Team
 
 Open PowerShell as Administrator on the Windows 11 VM and run the following to set the execution policy and install Atomic Red Team along with its test library:
@@ -615,6 +625,8 @@ IEX (IWR 'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/mas
 
 Install-AtomicRedTeam -getAtomics
 ```
+
+---
 
 ### Step 3: Run Attack Simulations
 
@@ -630,6 +642,8 @@ This simulates a file download using native PowerShell download methods, trigger
 
 **Expected result:** Wazuh fires a level 14 alert → Shuffle receives the webhook → Cortex queries VirusTotal → TheHive alert is created → if the VirusTotal score exceeds 3, the host is isolated via `drop-firewall`.
 
+---
+
 #### T1547.001 - Registry Run Key Modification (Rule 100012)
 
 ```powershell
@@ -639,6 +653,8 @@ Invoke-AtomicTest T1547.001 -TestNumbers 1
 This writes a value to a `CurrentVersion\Run` registry key, simulating a persistence mechanism that survives user login. Triggers rule 100012.
 
 **Expected result:** Wazuh fires a level 13 alert visible in the dashboard.
+
+---
 
 #### T1053.005 - Scheduled Task Creation (Rule 100013)
 
