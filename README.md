@@ -137,7 +137,7 @@ Cybersecurity-Lab-SIEM/
 - **SIEM Engineering** - custom detection rule creation and tuning, log source integration, agent management
 - **Incident Response** - end-to-end case lifecycle from detection to closure
 - **SOAR Development** - conditional workflow logic, API chaining, automated host isolation
-- **Threat Intelligence** - feed ingestion, IOC enrichment
+- **Threat Intelligence** - IOC enrichment, feed ingestion
 - **Adversary Emulation** - MITRE ATT&CK simulation, detection and validation
 - **Linux Administration** - Docker, systemd, networking
 
