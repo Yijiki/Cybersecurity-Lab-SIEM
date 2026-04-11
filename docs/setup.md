@@ -569,7 +569,7 @@ Search for **Wazuh** in the Shuffle app search bar and drag it onto the canvas. 
 
 `drop-firewall` is a built-in Wazuh active response command that blocks all inbound and outbound traffic on the agent using Windows Firewall, isolating the host from the network while leaving the Wazuh agent connection intact.
 
-The `agent.id` value pulled from the webhook payload ensures the isolation targets the specific host that triggered the alert rather than applying broadly.
+The `agent.id` value ensures the isolation targets the specific host that triggered the alert rather than every machine.
 
 ---
 
