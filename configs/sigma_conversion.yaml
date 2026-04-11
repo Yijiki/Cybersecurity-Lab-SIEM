@@ -1,1 +1,94 @@
-123
+title: Suspicious PowerShell Download Command
+id: 79ce2c45-2237-455d-85a9-41ac41d15530
+status: experimental
+description: Detects process creation events where the command line contains common PowerShell download methods used to pull remote payloads.
+references:
+    - https://attack.mitre.org/techniques/T1105/
+author: Shoaib Azad
+date: 2026/04/11
+tags:
+    - attack.command_and_control
+    - attack.t1105
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        CommandLine|re: '(?i)(Invoke-WebRequest|iwr|Net\.WebClient|curl)'
+    condition: selection
+falsepositives:
+    - Legitimate administrative scripts using PowerShell download methods
+level: high
+
+---
+
+title: Suppression - Microsoft Edge Update False Positive
+id: 33cb6fa6-18fa-42c2-bfac-c3aa49268690
+status: experimental
+description: Suppresses false positives from MicrosoftEdgeUpdate.exe triggering the suspicious PowerShell download rule.
+author: Shoaib Azad
+date: 2026/04/11
+tags:
+    - attack.command_and_control
+    - attack.t1105
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        CommandLine|re: '(?i)(Invoke-WebRequest|iwr|Net\.WebClient|curl)'
+    filter:
+        Image|endswith: '\MicrosoftEdgeUpdate.exe'
+    condition: selection and not filter
+falsepositives:
+    - None expected
+level: high
+
+---
+
+title: Registry Run Key Modification - Possible Persistence Mechanism
+id: ead04921-acb1-432f-b9c8-46037fe93701
+status: experimental
+description: Detects modifications to Registry Run, RunOnce, or RunOnceEx keys under HKCU, which are commonly abused for persistence.
+references:
+    - https://attack.mitre.org/techniques/T1547/001/
+author: Shoaib Azad
+date: 2026/04/11
+tags:
+    - attack.persistence
+    - attack.t1547.001
+logsource:
+    category: registry_set
+    product: windows
+detection:
+    selection:
+        TargetObject|re: '(?i)HKU\\.*\\CurrentVersion\\Run(Once)?(EX)?'
+    condition: selection
+falsepositives:
+    - Legitimate software writing to Run keys during installation
+level: high
+
+---
+
+title: Suspicious Scheduled Task Creation via Command Line
+id: 7b07fa2a-34bf-4cac-93b7-cc1b61c4d5db
+status: experimental
+description: Detects scheduled task creation via command line using schtasks, New-ScheduledTask, or Register-ScheduledTask, which may indicate persistence or execution scheduling.
+references:
+    - https://attack.mitre.org/techniques/T1053/005/
+author: Shoaib Azad
+date: 2026/04/11
+tags:
+    - attack.persistence
+    - attack.execution
+    - attack.t1053.005
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        CommandLine|re: '(?i)(schtasks.*\/create|New-ScheduledTask|Register-ScheduledTask)'
+    condition: selection
+falsepositives:
+    - Legitimate administrative scheduled task creation
+level: medium
