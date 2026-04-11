@@ -647,23 +647,3 @@ This creates a scheduled task via command line using `schtasks /create`, simulat
 **Expected result:** Wazuh fires a level 12 alert visible in the dashboard.
 
 > Full execution details and results are documented in [`attack_simulations.md`](attack_simulations.md).
-
----
-
-### Step 4: Validate the Pipeline
-
-After running the T1105 simulation, verify each stage of the pipeline completed successfully:
-
-**Wazuh** - Navigate to the Wazuh dashboard and confirm a level 14 alert fired for rule 100010 against the `vic-win11` agent. The alert should include the full command line in the event data.
-
-**Shuffle** - Open the AutoResponse workflow and check the execution history. Each node should show a green status. Click through the Regex, Cortex and TheHive nodes to confirm data was passed correctly between them.
-
-**TheHive** - Log in as the analyst user and confirm a new case was created automatically with the correct title, host details, rule information and VirusTotal score populated in the description.
-
-**Cortex** - Navigate to the Cortex job history and confirm a VirusTotal analyzer job ran and returned a result.
-
-**Active Response** - If the VirusTotal score exceeded the condition threshold, confirm the Windows VM lost network connectivity while remaining visible as an active agent in the Wazuh dashboard.
-
-
-
-
