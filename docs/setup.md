@@ -292,7 +292,7 @@ Inside the SOC-Lab organisation, create the following three users. After saving 
 
 Access Cortex at `http://127.0.0.1:9001/cortex`. On first access, click **Update the database** and then create an admin account.
 
-#### Create the Organisation
+#### Create an Organisation
 
 Click **Add Organisation** and set the name to `SOC-Lab` and the description to `Primary SOC`.
 
